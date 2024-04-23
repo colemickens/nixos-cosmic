@@ -20,15 +20,16 @@ in
       settings = {
         default_session = {
           user = "cosmic-greeter";
-          command = ''${pkgs.coreutils}/bin/env XCURSOR_THEME="''${XCURSOR_THEME:-Pop}" systemd-cat -t cosmic-greeter env RUST_LOG=debug ${pkgs.cosmic-comp}/bin/cosmic-comp ${pkgs.cosmic-greeter}/bin/cosmic-greeter'';
+          command = ''${pkgs.coreutils}/bin/env XCURSOR_THEME="''${XCURSOR_THEME:-Pop}" RUST_LOG=debug systemd-cat -t cosmic-greeter ${pkgs.cosmic-comp}/bin/cosmic-comp ${pkgs.cosmic-greeter}/bin/cosmic-greeter'';
         };
       };
     };
 
     # daemon for querying background state and such
     systemd.services.cosmic-greeter-daemon = {
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "display-manager.target" ];
       before = [ "greetd.service" ];
+      requiredBy = [ "greetd.service" ];
       serviceConfig = {
         ExecStart = "${pkgs.cosmic-greeter}/bin/cosmic-greeter-daemon";
         Restart = "on-failure";
