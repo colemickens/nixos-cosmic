@@ -25,11 +25,16 @@ in
       };
     };
 
+    systemd.services.greetd = {
+      after = [ "cosmic-greeter-daemon.service" ];
+      wants = [ "cosmic-greeter-daemon.service" ];
+    };
+
     # daemon for querying background state and such
     systemd.services.cosmic-greeter-daemon = {
-      wantedBy = [ "display-manager.target" ];
-      before = [ "greetd.service" ];
-      requiredBy = [ "greetd.service" ];
+      wantedBy = [ "multi-user.target" ];
+      # before = [ "greetd.service" ];
+      # wants = [ "greetd.service" ];
       serviceConfig = {
         ExecStart = "${pkgs.cosmic-greeter}/bin/cosmic-greeter-daemon";
         Restart = "on-failure";
